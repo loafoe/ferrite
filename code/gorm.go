@@ -32,5 +32,5 @@ func (c *GormStorer) FindByID(id string) (Code, error) {
 
 func (c *GormStorer) SaveCredentials(creds DockerCredentials) error {
 	tx := c.DB.Create(creds)
-	return tx.Commit().Error
+	return tx.Error
 }

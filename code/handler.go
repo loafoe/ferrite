@@ -60,10 +60,10 @@ func (g *Handler) Credentials(c echo.Context) error {
 	if err := json.Unmarshal(data, &creds); err != nil {
 		return err
 	}
-	if err := g.Storer.SaveCredentials(DockerCredentials{
+	if dbErr := g.Storer.SaveCredentials(DockerCredentials{
 		DockerCredentials: creds,
-	}); err != nil {
-		return err
+	}); dbErr != nil {
+		return dbErr
 	}
 	return c.JSON(http.StatusOK, creds)
 }
