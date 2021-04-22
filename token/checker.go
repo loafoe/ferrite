@@ -7,7 +7,7 @@ import (
 )
 
 func Checker(token string) echo.MiddlewareFunc {
-	auth := "Token " + token
+	auth := "OAuth " + token
 	errorMessage := struct {
 		Message string `json:"message"`
 	}{
@@ -17,9 +17,9 @@ func Checker(token string) echo.MiddlewareFunc {
 		return func(c echo.Context) error {
 			token := c.Request().Header.Get("Authorization")
 			if token != auth {
-				c.JSON(http.StatusUnauthorized, errorMessage)
+				return c.JSON(http.StatusUnauthorized, errorMessage)
 			}
-			c.Response().Header().Set(echo.HeaderServer, "Echo/3.0")
+			c.Response().Header().Set(echo.HeaderServer, "siderite-server")
 			return next(c)
 		}
 	}

@@ -54,6 +54,15 @@ func main() {
 		},
 	}
 
+	scheduleHandler := &schedule.Handler{
+		Storer: &schedule.GormStorer{
+			DB: db,
+		},
+		ProjectStorer: &project.GormStorer{
+			DB: db,
+		},
+	}
+
 	// API
 	e := echo.New()
 	e.Use(token.Checker("foo"))
@@ -70,10 +79,10 @@ func main() {
 	e.POST("/2/projects/:project/credentials", codeHandler.Credentials)
 
 	// Schedules
-	e.POST("/2/projects/:project/schedules", NotImplemented)
-	e.GET("/2/projects/:project/schedules", NotImplemented)
-	e.GET("/2/projects/:project/schedules/:schedule", NotImplemented)
-	e.POST("/2/projects/:project/schedules/:schedule/cancel", NotImplemented)
+	e.POST("/2/projects/:project/schedules", scheduleHandler.Create)
+	e.GET("/2/projects/:project/schedules", scheduleHandler.Find)
+	e.GET("/2/projects/:project/schedules/:schedule", scheduleHandler.Get)
+	e.POST("/2/projects/:project/schedules/:schedule/cancel", scheduleHandler.Delete)
 
 	// Tasks
 	e.GET("/2/projects/:project/tasks", NotImplemented)
@@ -91,6 +100,5 @@ var notImplemented = struct {
 }
 
 func NotImplemented(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
+	return c.JSON(http.StatusNotImplemented, notImplemented)
 }
