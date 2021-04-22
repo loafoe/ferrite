@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
+	"siderite-server/project"
 	"strings"
 
 	"github.com/google/uuid"
@@ -12,25 +13,51 @@ import (
 )
 
 type Handler struct {
-	Storer Storer
+	Storer        Storer
+	ProjectStorer project.Storer
+}
+
+type codeResponse struct {
+	Message string `json:"msg"`
 }
 
 func (g *Handler) Create(c echo.Context) error {
-	id := strings.Replace(uuid.New().String(), "-", "", -1)
 	var code Code
-	if err := c.Bind(&code); err != nil {
-		return err
+	projectID := c.Param("project")
+	p, err := g.ProjectStorer.FindByID(projectID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{"invalid or unknown project"})
 	}
+	if err := c.Bind(&code); err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+	}
+	code.ProjectID = p.ID
+	if code.ID != "" { // Update
+		if err := g.Storer.Update(code); err != nil {
+			return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+		}
+		return c.JSON(http.StatusOK, code)
+	}
+	id := strings.Replace(uuid.New().String(), "-", "", -1)
 	code.ID = id
 	createdCode, err := g.Storer.Create(code)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
 	}
 	return c.JSON(http.StatusCreated, createdCode)
 }
 
 func (g *Handler) Delete(c echo.Context) error {
-	panic("implement me")
+	var code Code
+	projectID := c.Param("project")
+	if err := c.Bind(&code); err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+	}
+	code.ProjectID = projectID
+	if err := g.Storer.Delete(code); err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+	}
+	return c.JSON(http.StatusOK, codeResponse{"Deleted"})
 }
 
 func (g *Handler) Update(c echo.Context) error {
@@ -38,11 +65,30 @@ func (g *Handler) Update(c echo.Context) error {
 }
 
 func (g *Handler) Find(c echo.Context) error {
-	panic("implement me")
+	projectID := c.Param("project")
+	p, err := g.ProjectStorer.FindByID(projectID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{"invalid or unknown project"})
+	}
+	codes, err := g.Storer.FindByProjectID(p.ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+	}
+	return c.JSON(http.StatusOK, codes)
 }
 
 func (g *Handler) Get(c echo.Context) error {
-	panic("implement me")
+	var code Code
+	projectID := c.Param("project")
+	if err := c.Bind(&code); err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+	}
+	code.ProjectID = projectID
+	foundCode, err := g.Storer.FindByID(code.ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+	}
+	return c.JSON(http.StatusOK, foundCode)
 }
 
 func (g *Handler) Credentials(c echo.Context) error {
@@ -50,20 +96,20 @@ func (g *Handler) Credentials(c echo.Context) error {
 		Message string `json:"msg"`
 	}
 	if err := c.Bind(&authRequest); err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
 	}
 	data, err := base64.StdEncoding.DecodeString(authRequest.Message)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
 	}
 	var creds iron.DockerCredentials
 	if err := json.Unmarshal(data, &creds); err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
 	}
 	if dbErr := g.Storer.SaveCredentials(DockerCredentials{
 		DockerCredentials: creds,
 	}); dbErr != nil {
-		return dbErr
+		return c.JSON(http.StatusBadRequest, codeResponse{dbErr.Error()})
 	}
 	return c.JSON(http.StatusOK, creds)
 }

@@ -34,13 +34,22 @@ func main() {
 		return
 	}
 	// Auto Migrate
-	db.AutoMigrate(&code.Code{})
-	db.AutoMigrate(&project.Project{})
-	db.AutoMigrate(&schedule.Schedule{})
-	db.AutoMigrate(&code.DockerCredentials{})
+	_ = db.AutoMigrate(&code.Code{})
+	_ = db.AutoMigrate(&project.Project{})
+	_ = db.AutoMigrate(&schedule.Schedule{})
+	_ = db.AutoMigrate(&code.DockerCredentials{})
 
 	codeHandler := &code.Handler{
 		Storer: &code.GormStorer{
+			DB: db,
+		},
+		ProjectStorer: &project.GormStorer{
+			DB: db,
+		},
+	}
+
+	projectHandler := &project.Handler{
+		Storer: &project.GormStorer{
 			DB: db,
 		},
 	}
@@ -49,6 +58,10 @@ func main() {
 	e := echo.New()
 	e.Use(token.Checker("foo"))
 	e.Use(middleware.Logger())
+
+	// Projects
+	e.POST("/2/projects", projectHandler.Create)
+
 	// Codes
 	e.POST("/2/projects/:project/codes", codeHandler.Create)
 	e.GET("/2/projects/:project/codes", codeHandler.Find)
@@ -57,16 +70,16 @@ func main() {
 	e.POST("/2/projects/:project/credentials", codeHandler.Credentials)
 
 	// Schedules
-	e.POST("/2/projects/:project/schedules", CreateSchedule)
-	e.GET("/2/projects/:project/schedules", GetSchedules)
-	e.GET("/2/projects/:project/schedules/:schedule_id", GetSchedule)
-	e.POST("/2/projects/:project/schedules/:schedule_id/cancel", CancelSchedule)
+	e.POST("/2/projects/:project/schedules", NotImplemented)
+	e.GET("/2/projects/:project/schedules", NotImplemented)
+	e.GET("/2/projects/:project/schedules/:schedule_id", NotImplemented)
+	e.POST("/2/projects/:project/schedules/:schedule_id/cancel", NotImplemented)
 
 	// Tasks
-	e.GET("/2/projects/:project/tasks", GetTasks)
-	e.GET("/2/projects/:project/tasks/:task_id", GetTask)
-	e.POST("/2/projects/:project/tasks", QueueTasks)
-	e.POST("/2/projects/:project/tasks/:task_id/cancel", CancelTask)
+	e.GET("/2/projects/:project/tasks", NotImplemented)
+	e.GET("/2/projects/:project/tasks/:task_id", NotImplemented)
+	e.POST("/2/projects/:project/tasks", NotImplemented)
+	e.POST("/2/projects/:project/tasks/:task_id/cancel", NotImplemented)
 
 	log.Fatal(e.Start(":8080"))
 }
@@ -77,62 +90,7 @@ var notImplemented = struct {
 	"Not implemented",
 }
 
-func CancelTask(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func QueueTasks(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func GetTask(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func GetTasks(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func CancelSchedule(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func GetSchedule(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func GetSchedules(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func CreateSchedule(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func DeleteCode(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func GetCode(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func GetCodes(c echo.Context) error {
-	c.JSON(http.StatusNotImplemented, notImplemented)
-	return nil
-}
-
-func CreateCode(c echo.Context) error {
+func NotImplemented(c echo.Context) error {
 	c.JSON(http.StatusNotImplemented, notImplemented)
 	return nil
 }
