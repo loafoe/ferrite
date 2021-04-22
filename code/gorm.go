@@ -17,8 +17,8 @@ func (c *GormStorer) Create(code Code) (*Code, error) {
 	return createdCode, err
 }
 
-func (c *GormStorer) Delete(code Code) error {
-	tx := c.DB.Delete(code)
+func (c *GormStorer) Delete(id string) error {
+	tx := c.DB.Delete(&Code{}, "id = ?", id)
 	return tx.Error
 }
 

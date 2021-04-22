@@ -48,13 +48,20 @@ func (g *Handler) Create(c echo.Context) error {
 }
 
 func (g *Handler) Delete(c echo.Context) error {
-	var code Code
 	projectID := c.Param("project")
-	if err := c.Bind(&code); err != nil {
-		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+	codeID := c.Param("code")
+	p, err := g.ProjectStorer.FindByID(projectID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{"invalid or unknown project"})
 	}
-	code.ProjectID = projectID
-	if err := g.Storer.Delete(code); err != nil {
+	code, err := g.Storer.FindByID(codeID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{"invalid or unknown code"})
+	}
+	if code.ProjectID != p.ID {
+		return c.JSON(http.StatusBadRequest, codeResponse{"invalid request"})
+	}
+	if err := g.Storer.Delete(code.ID); err != nil {
 		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
 	}
 	return c.JSON(http.StatusOK, codeResponse{"Deleted"})

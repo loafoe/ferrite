@@ -65,15 +65,15 @@ func main() {
 	// Codes
 	e.POST("/2/projects/:project/codes", codeHandler.Create)
 	e.GET("/2/projects/:project/codes", codeHandler.Find)
-	e.GET("/2/projects/:project/codes/:code_id", codeHandler.Get)
-	e.DELETE("/2/projects/:project/codes/:code_id", codeHandler.Delete)
+	e.GET("/2/projects/:project/codes/:code", codeHandler.Get)
+	e.DELETE("/2/projects/:project/codes/:code", codeHandler.Delete)
 	e.POST("/2/projects/:project/credentials", codeHandler.Credentials)
 
 	// Schedules
 	e.POST("/2/projects/:project/schedules", NotImplemented)
 	e.GET("/2/projects/:project/schedules", NotImplemented)
-	e.GET("/2/projects/:project/schedules/:schedule_id", NotImplemented)
-	e.POST("/2/projects/:project/schedules/:schedule_id/cancel", NotImplemented)
+	e.GET("/2/projects/:project/schedules/:schedule", NotImplemented)
+	e.POST("/2/projects/:project/schedules/:schedule/cancel", NotImplemented)
 
 	// Tasks
 	e.GET("/2/projects/:project/tasks", NotImplemented)
