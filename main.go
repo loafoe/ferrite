@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"siderite-server/code"
 	"siderite-server/project"
 	"siderite-server/schedule"
+	"siderite-server/task"
 	"siderite-server/token"
 
 	"github.com/cloudfoundry-community/gautocloud"
@@ -38,6 +38,7 @@ func main() {
 	_ = db.AutoMigrate(&project.Project{})
 	_ = db.AutoMigrate(&schedule.Schedule{})
 	_ = db.AutoMigrate(&code.DockerCredentials{})
+	_ = db.AutoMigrate(&task.Task{})
 
 	codeHandler := &code.Handler{
 		Storer: &code.GormStorer{
@@ -56,6 +57,15 @@ func main() {
 
 	scheduleHandler := &schedule.Handler{
 		Storer: &schedule.GormStorer{
+			DB: db,
+		},
+		ProjectStorer: &project.GormStorer{
+			DB: db,
+		},
+	}
+
+	taskHandler := &task.Handler{
+		Storer: &task.GormStorer{
 			DB: db,
 		},
 		ProjectStorer: &project.GormStorer{
@@ -85,20 +95,10 @@ func main() {
 	e.POST("/2/projects/:project/schedules/:schedule/cancel", scheduleHandler.Delete)
 
 	// Tasks
-	e.GET("/2/projects/:project/tasks", NotImplemented)
-	e.GET("/2/projects/:project/tasks/:task_id", NotImplemented)
-	e.POST("/2/projects/:project/tasks", NotImplemented)
-	e.POST("/2/projects/:project/tasks/:task_id/cancel", NotImplemented)
+	e.GET("/2/projects/:project/tasks", taskHandler.Find)
+	e.GET("/2/projects/:project/tasks/:task", taskHandler.Get)
+	e.POST("/2/projects/:project/tasks", taskHandler.Create)
+	e.POST("/2/projects/:project/tasks/:task/cancel", taskHandler.Delete)
 
 	log.Fatal(e.Start(":8080"))
-}
-
-var notImplemented = struct {
-	Message string `json:"message"`
-}{
-	"Not implemented",
-}
-
-func NotImplemented(c echo.Context) error {
-	return c.JSON(http.StatusNotImplemented, notImplemented)
 }
