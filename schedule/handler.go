@@ -31,7 +31,9 @@ func (g *Handler) Create(c echo.Context) error {
 	if err := c.Bind(&createSchedules); err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}
-	var createdSchedules []Schedule
+	var createdSchedules struct {
+		Schedules []Schedule `json:"schedules"`
+	}
 	for _, schedule := range createSchedules.Schedules {
 		schedule.ProjectID = p.ID
 		if schedule.ID != "" {
@@ -46,7 +48,7 @@ func (g *Handler) Create(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 		}
-		createdSchedules = append(createdSchedules, *createdSchedule)
+		createdSchedules.Schedules = append(createSchedules.Schedules, *createdSchedule)
 	}
 	return c.JSON(http.StatusCreated, createdSchedules)
 }

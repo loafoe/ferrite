@@ -30,7 +30,9 @@ func (g *Handler) Create(c echo.Context) error {
 	if err := c.Bind(&createTasks); err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 	}
-	var createdTasks []Task
+	var createdTasks struct {
+		Tasks []Task `json:"tasks"`
+	}
 	for _, task := range createTasks.Tasks {
 		task.ProjectID = p.ID
 		if task.ID != "" {
@@ -42,7 +44,7 @@ func (g *Handler) Create(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 		}
-		createdTasks = append(createdTasks, *createdTask)
+		createdTasks.Tasks = append(createdTasks.Tasks, *createdTask)
 	}
 	return c.JSON(http.StatusCreated, createdTasks)
 }
