@@ -83,7 +83,13 @@ func (g *Handler) Find(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}
-	return c.JSON(http.StatusOK, schedules)
+	var scheduleResponse struct {
+		Schedules []Schedule `json:"schedules"`
+	}
+	for _, schedule := range *schedules {
+		scheduleResponse.Schedules = append(scheduleResponse.Schedules, schedule)
+	}
+	return c.JSON(http.StatusOK, scheduleResponse)
 }
 
 func (g *Handler) Get(c echo.Context) error {

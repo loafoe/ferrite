@@ -81,11 +81,17 @@ func (g *Handler) Find(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{"invalid or unknown project"})
 	}
-	schedules, err := g.Storer.FindByProjectID(p.ID)
+	tasks, err := g.Storer.FindByProjectID(p.ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 	}
-	return c.JSON(http.StatusOK, schedules)
+	var taskResponse struct {
+		Tasks []Task `json:"tasks"`
+	}
+	for _, task := range *tasks {
+		taskResponse.Tasks = append(taskResponse.Tasks, task)
+	}
+	return c.JSON(http.StatusOK, taskResponse)
 }
 
 func (g *Handler) Get(c echo.Context) error {
