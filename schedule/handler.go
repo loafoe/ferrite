@@ -4,6 +4,7 @@ import (
 	"ferrite/project"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -38,6 +39,9 @@ func (g *Handler) Create(c echo.Context) error {
 		}
 		id := strings.Replace(uuid.New().String(), "-", "", -1)
 		schedule.ID = id
+		now := time.Now()
+		schedule.CreatedAt = &now
+		schedule.UpdatedAt = &now
 		createdSchedule, err := g.Storer.Create(schedule)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
