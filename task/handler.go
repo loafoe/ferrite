@@ -46,7 +46,7 @@ func (g *Handler) Create(c echo.Context) error {
 		}
 		createdTasks.Tasks = append(createdTasks.Tasks, *createdTask)
 	}
-	return c.JSON(http.StatusCreated, createdTasks)
+	return c.JSON(http.StatusOK, createdTasks)
 }
 
 func (g *Handler) Delete(c echo.Context) error {

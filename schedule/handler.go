@@ -50,7 +50,7 @@ func (g *Handler) Create(c echo.Context) error {
 		}
 		createdSchedules.Schedules = append(createSchedules.Schedules, *createdSchedule)
 	}
-	return c.JSON(http.StatusCreated, createdSchedules)
+	return c.JSON(http.StatusOK, createdSchedules)
 }
 
 func (g *Handler) Delete(c echo.Context) error {
