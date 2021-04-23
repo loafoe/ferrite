@@ -4,6 +4,7 @@ import (
 	"ferrite/project"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -40,6 +41,11 @@ func (g *Handler) Create(c echo.Context) error {
 		}
 		id := strings.Replace(uuid.New().String(), "-", "", -1)
 		task.ID = id
+		now := time.Now()
+		task.CreatedAt = &now
+		task.UpdatedAt = &now
+		task.StartTime = &now
+		task.EndTime = &now
 		createdTask, err := g.Storer.Create(task)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
