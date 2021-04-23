@@ -9,6 +9,7 @@ import (
 	"ferrite/token"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/labstack/echo/v4"
@@ -83,7 +84,7 @@ func main() {
 
 	// API
 	e := echo.New()
-	e.Use(token.Checker("foo"))
+	e.Use(token.Checker(os.Getenv("TOKEN")))
 	e.Use(middleware.Logger())
 
 	// Clusters
