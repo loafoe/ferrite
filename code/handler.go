@@ -90,13 +90,13 @@ func (g *Handler) Find(c echo.Context) error {
 }
 
 func (g *Handler) Get(c echo.Context) error {
-	var code Code
 	projectID := c.Param("project")
-	if err := c.Bind(&code); err != nil {
-		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
+	_, err := g.ProjectStorer.FindByID(projectID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, codeResponse{"invalid or unknown project"})
 	}
-	code.ProjectID = projectID
-	foundCode, err := g.Storer.FindByID(code.ID)
+	codeID := c.Param("code")
+	foundCode, err := g.Storer.FindByID(codeID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
 	}
