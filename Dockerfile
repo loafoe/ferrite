@@ -13,7 +13,8 @@ FROM alpine:3.13
 LABEL maintainer="andy.lo-a-foe@philips.com"
 RUN apk add --no-cache ca-certificates jq curl
 
-COPY --from=builder /build/app /app
+WORKDIR /app
+COPY --from=builder /build/app /app/app
 
 EXPOSE 8080
 
