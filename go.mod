@@ -1,4 +1,4 @@
-module siderite-server
+module ferrite
 
 go 1.16
 

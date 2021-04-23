@@ -1,8 +1,8 @@
 package task
 
 import (
+	"ferrite/project"
 	"net/http"
-	"siderite-server/project"
 	"strings"
 
 	"github.com/google/uuid"

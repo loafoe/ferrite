@@ -1,14 +1,14 @@
 package main
 
 import (
+	"ferrite/cluster"
+	"ferrite/code"
+	"ferrite/project"
+	"ferrite/schedule"
+	"ferrite/task"
+	"ferrite/token"
 	"fmt"
 	"log"
-	"siderite-server/cluster"
-	"siderite-server/code"
-	"siderite-server/project"
-	"siderite-server/schedule"
-	"siderite-server/task"
-	"siderite-server/token"
 
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/labstack/echo/v4"

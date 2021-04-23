@@ -1,7 +1,7 @@
 package schedule
 
 import (
-	"siderite-server/cluster"
+	"ferrite/cluster"
 
 	"github.com/philips-software/go-hsdp-api/iron"
 )

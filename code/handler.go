@@ -3,8 +3,8 @@ package code
 import (
 	"encoding/base64"
 	"encoding/json"
+	"ferrite/project"
 	"net/http"
-	"siderite-server/project"
 	"strings"
 
 	"github.com/google/uuid"
