@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"siderite-server/cluster"
 	"siderite-server/code"
 	"siderite-server/project"
 	"siderite-server/schedule"
@@ -34,6 +35,7 @@ func main() {
 		return
 	}
 	// Auto Migrate
+	_ = db.AutoMigrate(&cluster.Cluster{})
 	_ = db.AutoMigrate(&code.Code{})
 	_ = db.AutoMigrate(&project.Project{})
 	_ = db.AutoMigrate(&schedule.Schedule{})
@@ -73,10 +75,20 @@ func main() {
 		},
 	}
 
+	clusterHandler := &cluster.Handler{
+		Storer: &cluster.GormStorer{
+			DB: db,
+		},
+	}
+
 	// API
 	e := echo.New()
 	e.Use(token.Checker("foo"))
 	e.Use(middleware.Logger())
+
+	// Clusters
+	e.POST("/2/clusters", clusterHandler.Create)
+	e.GET("/2/clusters/:cluster", clusterHandler.Get)
 
 	// Projects
 	e.POST("/2/projects", projectHandler.Create)
