@@ -87,7 +87,8 @@ func (g *Handler) Get(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}
 	schedule.ProjectID = projectID
-	foundSchedule, err := g.Storer.FindByID(schedule.ID)
+	scheduleID := c.Param("schedule")
+	foundSchedule, err := g.Storer.FindByID(scheduleID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}

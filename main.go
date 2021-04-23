@@ -92,6 +92,7 @@ func main() {
 
 	// Projects
 	e.POST("/2/projects", projectHandler.Create)
+	e.GET("/2/projects/:project", projectHandler.Get)
 
 	// Codes
 	e.POST("/2/projects/:project/codes", codeHandler.Create)
