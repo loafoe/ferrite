@@ -8,5 +8,6 @@ import (
 
 type Code struct {
 	iron.Code
-	Schedules []schedule.Schedule `gorm:"foreignKey:CodeName;references:Name;constraint:OnDelete:CASCADE"`
+	Name      string              `gorm:"uniqueIndex" json:"name"`
+	Schedules []schedule.Schedule `gorm:"foreignKey:CodeName;references:Name;constraint:OnDelete:CASCADE" json:"-"`
 }
