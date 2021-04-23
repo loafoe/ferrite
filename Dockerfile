@@ -1,0 +1,20 @@
+FROM golang:alpine3.13 as builder
+WORKDIR /build
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+# Build
+COPY . .
+RUN go build -o app
+
+## Build final image
+FROM alpine:3.13
+LABEL maintainer="andy.lo-a-foe@philips.com"
+RUN apk add --no-cache ca-certificates jq curl
+
+COPY --from=builder /build/app /app
+
+EXPOSE 8080
+
+CMD ["/app/app"]
