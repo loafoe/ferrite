@@ -6,6 +6,7 @@ import (
 	"ferrite/project"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -28,7 +29,9 @@ func (g *Handler) Create(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, codeResponse{"invalid or unknown project"})
 	}
-	if err := c.Bind(&code); err != nil {
+	data := c.FormValue("data")
+	err = json.Unmarshal([]byte(data), &code)
+	if err != nil {
 		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
 	}
 	code.ProjectID = p.ID
@@ -40,6 +43,8 @@ func (g *Handler) Create(c echo.Context) error {
 	}
 	id := strings.Replace(uuid.New().String(), "-", "", -1)
 	code.ID = id
+	now := time.Now()
+	code.CreatedAt = &now
 	createdCode, err := g.Storer.Create(code)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
