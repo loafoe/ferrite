@@ -19,7 +19,7 @@ func Checker(token string) echo.MiddlewareFunc {
 			if token != auth {
 				return c.JSON(http.StatusUnauthorized, errorMessage)
 			}
-			c.Response().Header().Set(echo.HeaderServer, "siderite-server")
+			c.Response().Header().Set(echo.HeaderServer, "ferrite")
 			return next(c)
 		}
 	}
