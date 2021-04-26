@@ -1,5 +1,11 @@
 package task
 
+import "io"
+
+var (
+	None = io.EOF
+)
+
 type Storer interface {
 	Create(schedule Task) (*Task, error)
 	Delete(id string) error

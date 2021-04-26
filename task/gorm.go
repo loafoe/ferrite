@@ -1,8 +1,6 @@
 package task
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
 )
 
@@ -72,7 +70,7 @@ RETURNING
 	tasks.*;
 `).Scan(&task)
 	if task.ID == "" {
-		return nil, fmt.Errorf("no new task found")
+		return nil, None
 	}
 	return &task, tx.Error
 }

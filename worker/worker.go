@@ -13,15 +13,16 @@ func Start(storer task.Storer) (chan bool, error) {
 	go func() {
 		fmt.Printf("starting worker..\n")
 		for {
-			select {
-			case <-ticker.C:
-				err := fetchAndRunNextAvailableTask(storer)
-				if err != nil {
-					fmt.Printf("ticker: %v\n", err)
+			err := fetchAndRunNextAvailableTask(storer)
+			fmt.Printf("worker: %v\n", err)
+			if err == task.None {
+				select {
+				case <-ticker.C:
+					continue
+				case <-done:
+					fmt.Printf("Received done signal. Exiting...\n")
+					return
 				}
-			case <-done:
-				fmt.Printf("Received done signal. Exiting...\n")
-				return
 			}
 		}
 	}()
