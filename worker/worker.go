@@ -14,8 +14,8 @@ func Start(storer task.Storer) (chan bool, error) {
 		fmt.Printf("starting worker..\n")
 		for {
 			err := fetchAndRunNextAvailableTask(storer)
-			fmt.Printf("worker: %v\n", err)
 			if err == task.None {
+				fmt.Printf("worker: %v\n", err)
 				select {
 				case <-ticker.C:
 					continue

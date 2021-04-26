@@ -42,6 +42,7 @@ func (g *Handler) Create(c echo.Context) error {
 		id := strings.Replace(uuid.New().String(), "-", "", -1)
 		task.ID = id
 		now := time.Now()
+		task.Status = "new"
 		task.CreatedAt = &now
 		task.UpdatedAt = &now
 		task.StartTime = &now
