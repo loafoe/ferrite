@@ -1,6 +1,10 @@
 package task
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 type GormStorer struct {
 	DB *gorm.DB
@@ -36,4 +40,39 @@ func (g *GormStorer) FindByCodeName(codeName string) (*[]Task, error) {
 	var schedules []Task
 	tx := g.DB.Find(&schedules, "code_name = ?", codeName)
 	return &schedules, tx.Error
+}
+
+func (g *GormStorer) SetStatus(id, status string) error {
+	tx := g.DB.Model(&Task{}).Where("id = ?", id).Update("status", status)
+	return tx.Error
+}
+
+func (g *GormStorer) Next() (*Task, error) {
+	var task Task
+	tx := g.DB.Raw(`
+WITH task AS (
+  	SELECT
+		id
+	FROM
+		tasks
+	WHERE
+		status = 'new'
+	LIMIT 1
+	FOR UPDATE SKIP LOCKED
+) 
+UPDATE
+	tasks
+SET
+	status = 'pending'
+FROM 
+	task
+WHERE
+	tasks.id = task.id
+RETURNING
+	tasks.*;
+`).Scan(&task)
+	if task.ID == "" {
+		return nil, fmt.Errorf("no new task found")
+	}
+	return &task, tx.Error
 }

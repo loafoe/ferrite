@@ -5,4 +5,6 @@ type Storer interface {
 	Delete(id string) error
 	FindByID(id string) (*Task, error)
 	FindByProjectID(id string) (*[]Task, error)
+	Next() (*Task, error)
+	SetStatus(id, status string) error
 }

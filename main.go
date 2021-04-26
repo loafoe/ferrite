@@ -7,6 +7,7 @@ import (
 	"ferrite/schedule"
 	"ferrite/task"
 	"ferrite/token"
+	"ferrite/worker"
 	"fmt"
 	"log"
 	"os"
@@ -35,6 +36,19 @@ func main() {
 		fmt.Printf("error configuring gorm: %v\n", err)
 		return
 	}
+
+	// Check if we should go in worker mode
+	if len(os.Args) > 1 && os.Args[1] == "worker" {
+		_, err := worker.Start(&task.GormStorer{
+			DB: db,
+		})
+		if err != nil {
+			fmt.Printf("error starting worker: %v\n", err)
+		}
+		select {}
+		return
+	}
+
 	// Auto Migrate
 	_ = db.AutoMigrate(&cluster.Cluster{})
 	_ = db.AutoMigrate(&code.Code{})
