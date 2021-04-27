@@ -70,7 +70,7 @@ func runTask(t task.Task, codes code.Storer) error {
 	_, _ = io.Copy(os.Stdout, out)
 
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: t.CodeName,
+		Image: taskCode.Image,
 		Tty:   false,
 	}, nil, nil, nil, t.ID)
 	if err != nil {
