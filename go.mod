@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.38.22 // indirect
 	github.com/cloudfoundry-community/gautocloud v1.1.6
 	github.com/cloudfoundry-community/go-cfenv v1.18.0 // indirect
+	github.com/docker/docker v20.10.6+incompatible
 	github.com/elastic/go-elasticsearch/v7 v7.12.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/golang/mock v1.5.0 // indirect
@@ -32,6 +33,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.10 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
+	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
 	github.com/pelletier/go-toml v1.9.0 // indirect
 	github.com/philips-software/gautocloud-connectors v0.4.0
 	github.com/philips-software/go-hsdp-api v0.37.2-0.20210423095204-fff2213dff0f
