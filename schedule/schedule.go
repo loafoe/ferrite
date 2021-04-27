@@ -6,4 +6,5 @@ import (
 
 type Schedule struct {
 	iron.Schedule
+	CodeID string
 }

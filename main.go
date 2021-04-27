@@ -41,6 +41,8 @@ func main() {
 	if len(os.Args) > 1 && os.Args[1] == "worker" {
 		_, err := worker.Start(&task.GormStorer{
 			DB: db,
+		}, &code.GormStorer{
+			DB: db,
 		})
 		if err != nil {
 			fmt.Printf("error starting worker: %v\n", err)

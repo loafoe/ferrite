@@ -32,6 +32,12 @@ func (c *GormStorer) FindByID(id string) (*Code, error) {
 	return &code, tx.Error
 }
 
+func (c *GormStorer) FindByName(name string) (*Code, error) {
+	var code Code
+	tx := c.DB.First(&code, "name = ?", name)
+	return &code, tx.Error
+}
+
 func (c *GormStorer) SaveCredentials(creds DockerCredentials) error {
 	tx := c.DB.Create(creds)
 	return tx.Error

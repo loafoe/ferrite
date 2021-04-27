@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"ferrite/code"
 	"ferrite/task"
 	"fmt"
 	"io"
@@ -15,13 +16,13 @@ import (
 )
 
 // Start starts a worker run
-func Start(storer task.Storer) (chan bool, error) {
+func Start(storer task.Storer, codes code.Storer) (chan bool, error) {
 	done := make(chan bool)
 	ticker := time.NewTicker(5 * time.Second)
 	go func() {
 		fmt.Printf("starting worker..\n")
 		for {
-			err := fetchAndRunNextAvailableTask(storer)
+			err := fetchAndRunNextAvailableTask(storer, codes)
 			if err == task.None {
 				select {
 				case <-ticker.C:
@@ -36,14 +37,14 @@ func Start(storer task.Storer) (chan bool, error) {
 	return done, nil
 }
 
-func fetchAndRunNextAvailableTask(storer task.Storer) error {
+func fetchAndRunNextAvailableTask(storer task.Storer, codes code.Storer) error {
 	t, err := storer.Next()
 	if err != nil {
 		return err
 	}
 	fmt.Printf("new task: %s\n", t.ID)
 	_ = storer.SetStatus(t.ID, "running")
-	if err := runTask(*t); err != nil {
+	if err := runTask(*t, codes); err != nil {
 		fmt.Printf("error running task: %v\n", err)
 		_ = storer.SetStatus(t.ID, "error")
 		return err
@@ -51,13 +52,17 @@ func fetchAndRunNextAvailableTask(storer task.Storer) error {
 	return storer.SetStatus(t.ID, "done")
 }
 
-func runTask(t task.Task) error {
+func runTask(t task.Task, codes code.Storer) error {
 	ctx := context.Background()
+	taskCode, err := codes.FindByName(t.CodeName)
+	if err != nil {
+		return err
+	}
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
-	out, err := cli.ImagePull(ctx, t.CodeName, types.ImagePullOptions{})
+	out, err := cli.ImagePull(ctx, taskCode.Image, types.ImagePullOptions{})
 	if err != nil {
 		return err
 	}

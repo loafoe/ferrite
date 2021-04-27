@@ -5,6 +5,7 @@ type Storer interface {
 	Delete(id string) error
 	Update(code Code) error
 	FindByID(id string) (*Code, error)
+	FindByName(id string) (*Code, error)
 	FindByProjectID(id string) (*[]Code, error)
 	SaveCredentials(creds DockerCredentials) error
 }
