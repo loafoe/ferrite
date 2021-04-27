@@ -41,9 +41,10 @@ func fetchAndRunNextAvailableTask(storer task.Storer) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("New task: %s\n", t.ID)
+	fmt.Printf("new task: %s\n", t.ID)
 	_ = storer.SetStatus(t.ID, "running")
 	if err := runTask(*t); err != nil {
+		fmt.Printf("error running task: %v\n", err)
 		_ = storer.SetStatus(t.ID, "error")
 		return err
 	}
@@ -72,7 +73,7 @@ func runTask(t task.Task) error {
 	}
 
 	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		panic(err)
+		return err
 	}
 
 	statusCh, errCh := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
