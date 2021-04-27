@@ -11,6 +11,8 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
+	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
 )
@@ -69,10 +71,26 @@ func runTask(t task.Task, codes code.Storer) error {
 	defer out.Close()
 	_, _ = io.Copy(os.Stdout, out)
 
+	// Create volume
+	vol, err := cli.VolumeCreate(ctx, volume.VolumeCreateBody{
+		Driver: "local",
+		Name:   t.ID,
+	})
+	if err != nil {
+		return err
+	}
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: taskCode.Image,
 		Tty:   false,
-	}, nil, nil, nil, t.ID)
+	}, &container.HostConfig{
+		Mounts: []mount.Mount{
+			{
+				Type:   mount.TypeVolume,
+				Source: vol.Mountpoint,
+				Target: "/work",
+			},
+		},
+	}, nil, nil, t.ID)
 	if err != nil {
 		return err
 	}
@@ -97,5 +115,8 @@ func runTask(t task.Task, codes code.Storer) error {
 
 	_, _ = stdcopy.StdCopy(os.Stdout, os.Stderr, logs)
 
-	return nil
+	return cli.ContainerRemove(ctx, resp.ID, types.ContainerRemoveOptions{
+		RemoveVolumes: true,
+		Force:         true,
+	})
 }
