@@ -1,6 +1,8 @@
 package worker
 
 import (
+	"archive/tar"
+	"bytes"
 	"context"
 	"ferrite/storer"
 	"ferrite/types"
@@ -15,6 +17,7 @@ import (
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
+	"github.com/philips-software/go-hsdp-api/iron"
 )
 
 // Start starts a worker run
@@ -84,7 +87,11 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	}()
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: taskCode.Image,
-		Tty:   false,
+		Env: []string{
+			fmt.Sprintf("TASK_ID=%s", t.ID),
+			"PAYLOAD_FILE=/work/payload.json",
+		},
+		Tty: false,
 	}, &container.HostConfig{
 		Mounts: []mount.Mount{
 			{
@@ -98,10 +105,38 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 		return err
 	}
 
+	// Prepare payload
+	cluster, err := fs.Cluster.FindByID(t.Cluster)
+	if err != nil {
+		return fmt.Errorf("finding cluster: %w", err)
+	}
+	decoded, err := iron.DecryptPayload([]byte(cluster.PrivateKey), t.Payload)
+	if err != nil {
+		return fmt.Errorf("decrypting payload: %w", err)
+	}
+	fmt.Printf("Payload: %s\n", decoded)
+
+	// Copy payload to container
+	var buf bytes.Buffer
+	tw := tar.NewWriter(&buf)
+	_ = tw.WriteHeader(&tar.Header{
+		Name: "payload.json",
+		Mode: 0600,
+		Size: int64(len(decoded)),
+	})
+	_, _ = tw.Write([]byte(decoded))
+	_ = tw.Close()
+	tr := tar.NewReader(&buf)
+	if err := cli.CopyToContainer(ctx, resp.ID, "/work", tr, dockertypes.CopyToContainerOptions{}); err != nil {
+		return fmt.Errorf("writing payload to container: %w", err)
+	}
+
+	// Start container
 	if err := cli.ContainerStart(ctx, resp.ID, dockertypes.ContainerStartOptions{}); err != nil {
 		return err
 	}
 
+	// Wait for container to finish
 	statusCh, errCh := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
 	select {
 	case err := <-errCh:
@@ -118,6 +153,7 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 
 	_, _ = stdcopy.StdCopy(os.Stdout, os.Stderr, logs)
 
+	// Cleanup
 	return cli.ContainerRemove(ctx, resp.ID, dockertypes.ContainerRemoveOptions{
 		RemoveVolumes: true,
 		Force:         true,
