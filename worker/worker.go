@@ -120,7 +120,7 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)
 	_ = tw.WriteHeader(&tar.Header{
-		Name: "payload.json",
+		Name: "/work/payload.json",
 		Mode: 0600,
 		Size: int64(len(decoded)),
 	})
