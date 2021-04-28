@@ -119,12 +119,18 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	// Copy payload to container
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)
-	_ = tw.WriteHeader(&tar.Header{
-		Name: "/work/payload.json",
+	err = tw.WriteHeader(&tar.Header{
+		Name: "payload.json",
 		Mode: 0600,
 		Size: int64(len(decoded)),
 	})
-	_, _ = tw.Write([]byte(decoded))
+	if err != nil {
+		return fmt.Errorf("tarWriteHeader: %w", err)
+	}
+	_, err = tw.Write([]byte(decoded))
+	if err != nil {
+		return fmt.Errorf("tarWrite: %w", err)
+	}
 	_ = tw.Close()
 	tr := tar.NewReader(&buf)
 	if err := cli.CopyToContainer(ctx, resp.ID, "/work", tr, dockertypes.CopyToContainerOptions{}); err != nil {
