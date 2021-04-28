@@ -89,7 +89,7 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 		Image: taskCode.Image,
 		Env: []string{
 			fmt.Sprintf("TASK_ID=%s", t.ID),
-			"PAYLOAD_FILE=/work/payload.json",
+			"PAYLOAD_FILE=/payload.json",
 		},
 		Tty: false,
 	}, &container.HostConfig{
@@ -120,20 +120,20 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)
 	err = tw.WriteHeader(&tar.Header{
-		Name: "payload.json",
+		Name: "/payload.json",
 		Mode: 0600,
 		Size: int64(len(decoded)),
 	})
 	if err != nil {
 		return fmt.Errorf("tarWriteHeader: %w", err)
 	}
-	_, err = tw.Write([]byte(decoded))
+	_, err = tw.Write(decoded)
 	if err != nil {
 		return fmt.Errorf("tarWrite: %w", err)
 	}
 	_ = tw.Close()
 	tr := tar.NewReader(&buf)
-	if err := cli.CopyToContainer(ctx, resp.ID, "/work", tr, dockertypes.CopyToContainerOptions{}); err != nil {
+	if err := cli.CopyToContainer(ctx, resp.ID, "/", tr, dockertypes.CopyToContainerOptions{}); err != nil {
 		return fmt.Errorf("writing payload to container: %w", err)
 	}
 
