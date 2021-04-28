@@ -25,7 +25,7 @@ type codeResponse struct {
 func (g *CodeService) Create(c echo.Context) error {
 	var code types.Code
 	projectID := c.Param("project")
-	p, err := g.Storer.Code.FindByID(projectID)
+	p, err := g.Storer.Project.FindByID(projectID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, codeResponse{"invalid or unknown project"})
 	}
