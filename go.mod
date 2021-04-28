@@ -36,7 +36,7 @@ require (
 	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
 	github.com/pelletier/go-toml v1.9.0 // indirect
 	github.com/philips-software/gautocloud-connectors v0.4.0
-	github.com/philips-software/go-hsdp-api v0.37.2-0.20210423095204-fff2213dff0f
+	github.com/philips-software/go-hsdp-api v0.38.1-0.20210428093718-ae85aad3438b
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
