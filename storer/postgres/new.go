@@ -37,5 +37,8 @@ func New(conn *sql.DB) (*storer.Ferrite, error) {
 		Cluster: &ClusterStorer{
 			DB: db,
 		},
+		Schedule: &ScheduleStorer{
+			DB: db,
+		},
 	}, nil
 }
