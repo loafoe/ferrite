@@ -79,6 +79,9 @@ func runTask(t task.Task, codes code.Storer) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		_ = cli.VolumeRemove(ctx, t.ID, true)
+	}()
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: taskCode.Image,
 		Tty:   false,
