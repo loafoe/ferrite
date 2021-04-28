@@ -70,6 +70,9 @@ func (g *ClusterService) Get(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, clusterResponse{err.Error()})
 	}
 	block, _ := pem.Decode([]byte(foundCluster.PrivateKey))
+	if block == nil {
+		return c.JSON(http.StatusInternalServerError, clusterResponse{err.Error()})
+	}
 	foundCluster.PrivateKey = ""
 
 	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
