@@ -1,7 +1,8 @@
-package schedule
+package server
 
 import (
-	"ferrite/project"
+	"ferrite/storer"
+	"ferrite/types"
 	"net/http"
 	"strings"
 	"time"
@@ -10,21 +11,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Handler struct {
-	Storer        Storer
-	ProjectStorer project.Storer
+type ScheduleService struct {
+	Storer *storer.Ferrite
 }
 
 type scheduleResponse struct {
 	Message string `json:"msg"`
 }
 
-func (g *Handler) Create(c echo.Context) error {
+func (g *ScheduleService) Create(c echo.Context) error {
 	var createSchedules struct {
-		Schedules []Schedule `json:"schedules"`
+		Schedules []types.Schedule `json:"schedules"`
 	}
 	projectID := c.Param("project")
-	p, err := g.ProjectStorer.FindByID(projectID)
+	p, err := g.Storer.Project.FindByID(projectID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{"invalid or unknown project"})
 	}
@@ -32,7 +32,7 @@ func (g *Handler) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}
 	var createdSchedules struct {
-		Schedules []Schedule `json:"schedules"`
+		Schedules []types.Schedule `json:"schedules"`
 	}
 	for _, schedule := range createSchedules.Schedules {
 		schedule.ProjectID = p.ID
@@ -44,7 +44,7 @@ func (g *Handler) Create(c echo.Context) error {
 		now := time.Now()
 		schedule.CreatedAt = &now
 		schedule.UpdatedAt = &now
-		createdSchedule, err := g.Storer.Create(schedule)
+		createdSchedule, err := g.Storer.Schedule.Create(schedule)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 		}
@@ -53,38 +53,38 @@ func (g *Handler) Create(c echo.Context) error {
 	return c.JSON(http.StatusOK, createdSchedules)
 }
 
-func (g *Handler) Delete(c echo.Context) error {
+func (g *ScheduleService) Delete(c echo.Context) error {
 	projectID := c.Param("project")
 	scheduleID := c.Param("schedule")
-	p, err := g.ProjectStorer.FindByID(projectID)
+	p, err := g.Storer.Project.FindByID(projectID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{"invalid or unknown project"})
 	}
-	schedule, err := g.Storer.FindByID(scheduleID)
+	schedule, err := g.Storer.Schedule.FindByID(scheduleID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{"invalid or unknown schedule"})
 	}
 	if schedule.ProjectID != p.ID {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{"invalid request"})
 	}
-	if err := g.Storer.Delete(schedule.ID); err != nil {
+	if err := g.Storer.Schedule.Delete(schedule.ID); err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}
 	return c.JSON(http.StatusOK, scheduleResponse{"Cancelled"})
 }
 
-func (g *Handler) Find(c echo.Context) error {
+func (g *ScheduleService) Find(c echo.Context) error {
 	projectID := c.Param("project")
-	p, err := g.ProjectStorer.FindByID(projectID)
+	p, err := g.Storer.Project.FindByID(projectID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{"invalid or unknown project"})
 	}
-	schedules, err := g.Storer.FindByProjectID(p.ID)
+	schedules, err := g.Storer.Schedule.FindByProjectID(p.ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}
 	var scheduleResponse struct {
-		Schedules []Schedule `json:"schedules"`
+		Schedules []types.Schedule `json:"schedules"`
 	}
 	for _, schedule := range *schedules {
 		scheduleResponse.Schedules = append(scheduleResponse.Schedules, schedule)
@@ -92,15 +92,15 @@ func (g *Handler) Find(c echo.Context) error {
 	return c.JSON(http.StatusOK, scheduleResponse)
 }
 
-func (g *Handler) Get(c echo.Context) error {
-	var schedule Schedule
+func (g *ScheduleService) Get(c echo.Context) error {
+	var schedule types.Schedule
 	projectID := c.Param("project")
 	if err := c.Bind(&schedule); err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}
 	schedule.ProjectID = projectID
 	scheduleID := c.Param("schedule")
-	foundSchedule, err := g.Storer.FindByID(scheduleID)
+	foundSchedule, err := g.Storer.Schedule.FindByID(scheduleID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, scheduleResponse{err.Error()})
 	}

@@ -1,10 +1,12 @@
-package cluster
+package server
 
 import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"ferrite/storer"
+	"ferrite/types"
 	"net/http"
 	"strings"
 
@@ -12,16 +14,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Handler struct {
-	Storer Storer
+type ClusterService struct {
+	Storer *storer.Ferrite
 }
 
 type clusterResponse struct {
 	Message string `json:"msg"`
 }
 
-func (g *Handler) Create(c echo.Context) error {
-	var cluster Cluster
+func (g *ClusterService) Create(c echo.Context) error {
+	var cluster types.Cluster
 	if err := c.Bind(&cluster); err != nil {
 		return c.JSON(http.StatusBadRequest, clusterResponse{err.Error()})
 	}
@@ -45,7 +47,7 @@ func (g *Handler) Create(c echo.Context) error {
 	privateKeyPEM := pem.EncodeToMemory(privateKeyBlock)
 	cluster.PrivateKey = string(privateKeyPEM)
 
-	createdCluster, err := g.Storer.Create(cluster)
+	createdCluster, err := g.Storer.Cluster.Create(cluster)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, clusterResponse{err.Error()})
 	}
@@ -61,9 +63,9 @@ func (g *Handler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, createdCluster)
 }
 
-func (g *Handler) Get(c echo.Context) error {
+func (g *ClusterService) Get(c echo.Context) error {
 	clusterID := c.Param("cluster")
-	foundCluster, err := g.Storer.FindByID(clusterID)
+	foundCluster, err := g.Storer.Cluster.FindByID(clusterID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, clusterResponse{err.Error()})
 	}

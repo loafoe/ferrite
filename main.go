@@ -1,11 +1,8 @@
 package main
 
 import (
-	"ferrite/cluster"
-	"ferrite/code"
-	"ferrite/project"
-	"ferrite/schedule"
-	"ferrite/task"
+	"ferrite/server"
+	pg "ferrite/storer/postgres"
 	"ferrite/token"
 	"ferrite/worker"
 	"fmt"
@@ -16,34 +13,27 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/philips-software/gautocloud-connectors/hsdp"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 func main() {
 	// Database
-	var svc *hsdp.PostgreSQLClient
+	var pgclient *hsdp.PostgreSQLClient
 
-	err := gautocloud.Inject(&svc)
+	err := gautocloud.Inject(&pgclient)
 	if err != nil {
 		fmt.Printf("error discovering database: %v\n", err)
 		return
 	}
-	db, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: svc.DB,
-	}))
+
+	fs, err := pg.New(pgclient.DB)
 	if err != nil {
-		fmt.Printf("error configuring gorm: %v\n", err)
+		fmt.Printf("error configuring postgres storer: %v\n", err)
 		return
 	}
 
 	// Check if we should go in worker mode
 	if len(os.Args) > 1 && os.Args[1] == "worker" {
-		_, err := worker.Start(&task.GormStorer{
-			DB: db,
-		}, &code.GormStorer{
-			DB: db,
-		})
+		_, err := worker.Start(fs)
 		if err != nil {
 			fmt.Printf("error starting worker: %v\n", err)
 		}
@@ -51,51 +41,10 @@ func main() {
 		return
 	}
 
-	// Auto Migrate
-	_ = db.AutoMigrate(&cluster.Cluster{})
-	_ = db.AutoMigrate(&code.Code{})
-	_ = db.AutoMigrate(&project.Project{})
-	_ = db.AutoMigrate(&schedule.Schedule{})
-	_ = db.AutoMigrate(&code.DockerCredentials{})
-	_ = db.AutoMigrate(&task.Task{})
-
-	codeHandler := &code.Handler{
-		Storer: &code.GormStorer{
-			DB: db,
-		},
-		ProjectStorer: &project.GormStorer{
-			DB: db,
-		},
-	}
-
-	projectHandler := &project.Handler{
-		Storer: &project.GormStorer{
-			DB: db,
-		},
-	}
-
-	scheduleHandler := &schedule.Handler{
-		Storer: &schedule.GormStorer{
-			DB: db,
-		},
-		ProjectStorer: &project.GormStorer{
-			DB: db,
-		},
-	}
-
-	taskHandler := &task.Handler{
-		Storer: &task.GormStorer{
-			DB: db,
-		},
-		ProjectStorer: &project.GormStorer{
-			DB: db,
-		},
-	}
-
-	clusterHandler := &cluster.Handler{
-		Storer: &cluster.GormStorer{
-			DB: db,
-		},
+	svc, err := server.New(fs)
+	if err != nil {
+		fmt.Printf("error initializing server: %v\n", err)
+		return
 	}
 
 	// API
@@ -104,31 +53,31 @@ func main() {
 	e.Use(middleware.Logger())
 
 	// Clusters
-	e.POST("/2/clusters", clusterHandler.Create)
-	e.GET("/2/clusters/:cluster", clusterHandler.Get)
+	e.POST("/2/clusters", svc.Cluster.Create)
+	e.GET("/2/clusters/:cluster", svc.Cluster.Get)
 
 	// Projects
-	e.POST("/2/projects", projectHandler.Create)
-	e.GET("/2/projects/:project", projectHandler.Get)
+	e.POST("/2/projects", svc.Project.Create)
+	e.GET("/2/projects/:project", svc.Project.Get)
 
 	// Codes
-	e.POST("/2/projects/:project/codes", codeHandler.Create)
-	e.GET("/2/projects/:project/codes", codeHandler.Find)
-	e.GET("/2/projects/:project/codes/:code", codeHandler.Get)
-	e.DELETE("/2/projects/:project/codes/:code", codeHandler.Delete)
-	e.POST("/2/projects/:project/credentials", codeHandler.Credentials)
+	e.POST("/2/projects/:project/codes", svc.Code.Create)
+	e.GET("/2/projects/:project/codes", svc.Code.Find)
+	e.GET("/2/projects/:project/codes/:code", svc.Code.Get)
+	e.DELETE("/2/projects/:project/codes/:code", svc.Code.Delete)
+	e.POST("/2/projects/:project/credentials", svc.Code.Credentials)
 
 	// Schedules
-	e.POST("/2/projects/:project/schedules", scheduleHandler.Create)
-	e.GET("/2/projects/:project/schedules", scheduleHandler.Find)
-	e.GET("/2/projects/:project/schedules/:schedule", scheduleHandler.Get)
-	e.POST("/2/projects/:project/schedules/:schedule/cancel", scheduleHandler.Delete)
+	e.POST("/2/projects/:project/schedules", svc.Schedule.Create)
+	e.GET("/2/projects/:project/schedules", svc.Schedule.Find)
+	e.GET("/2/projects/:project/schedules/:schedule", svc.Schedule.Get)
+	e.POST("/2/projects/:project/schedules/:schedule/cancel", svc.Schedule.Delete)
 
 	// Tasks
-	e.GET("/2/projects/:project/tasks", taskHandler.Find)
-	e.GET("/2/projects/:project/tasks/:task", taskHandler.Get)
-	e.POST("/2/projects/:project/tasks", taskHandler.Create)
-	e.POST("/2/projects/:project/tasks/:task/cancel", taskHandler.Delete)
+	e.GET("/2/projects/:project/tasks", svc.Task.Find)
+	e.GET("/2/projects/:project/tasks/:task", svc.Task.Get)
+	e.POST("/2/projects/:project/tasks", svc.Task.Create)
+	e.POST("/2/projects/:project/tasks/:task/cancel", svc.Task.Delete)
 
 	log.Fatal(e.Start(":8080"))
 }

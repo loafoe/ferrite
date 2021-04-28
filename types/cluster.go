@@ -1,4 +1,4 @@
-package cluster
+package types
 
 type Cluster struct {
 	ID         string `json:"id" gorm:"primaryKey"`

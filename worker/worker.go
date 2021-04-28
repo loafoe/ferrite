@@ -2,14 +2,14 @@ package worker
 
 import (
 	"context"
-	"ferrite/code"
-	"ferrite/task"
+	"ferrite/storer"
+	"ferrite/types"
 	"fmt"
 	"io"
 	"os"
 	"time"
 
-	"github.com/docker/docker/api/types"
+	dockertypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/volume"
@@ -18,14 +18,14 @@ import (
 )
 
 // Start starts a worker run
-func Start(storer task.Storer, codes code.Storer) (chan bool, error) {
+func Start(fs *storer.Ferrite) (chan bool, error) {
 	done := make(chan bool)
 	ticker := time.NewTicker(5 * time.Second)
 	go func() {
 		fmt.Printf("starting worker..\n")
 		for {
-			err := fetchAndRunNextAvailableTask(storer, codes)
-			if err == task.None {
+			err := fetchAndRunNextAvailableTask(fs)
+			if err == storer.TaskNone {
 				select {
 				case <-ticker.C:
 					continue
@@ -39,24 +39,24 @@ func Start(storer task.Storer, codes code.Storer) (chan bool, error) {
 	return done, nil
 }
 
-func fetchAndRunNextAvailableTask(storer task.Storer, codes code.Storer) error {
-	t, err := storer.Next()
+func fetchAndRunNextAvailableTask(fs *storer.Ferrite) error {
+	t, err := fs.Task.Next()
 	if err != nil {
 		return err
 	}
 	fmt.Printf("new task: %s\n", t.ID)
-	_ = storer.SetStatus(t.ID, "running")
-	if err := runTask(*t, codes); err != nil {
+	_ = fs.Task.SetStatus(t.ID, "running")
+	if err := runTask(*t, fs); err != nil {
 		fmt.Printf("error running task: %v\n", err)
-		_ = storer.SetStatus(t.ID, "error")
+		_ = fs.Task.SetStatus(t.ID, "error")
 		return err
 	}
-	return storer.SetStatus(t.ID, "done")
+	return fs.Task.SetStatus(t.ID, "done")
 }
 
-func runTask(t task.Task, codes code.Storer) error {
+func runTask(t types.Task, fs *storer.Ferrite) error {
 	ctx := context.Background()
-	taskCode, err := codes.FindByName(t.CodeName)
+	taskCode, err := fs.Code.FindByName(t.CodeName)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func runTask(t task.Task, codes code.Storer) error {
 	if err != nil {
 		return err
 	}
-	out, err := cli.ImagePull(ctx, taskCode.Image, types.ImagePullOptions{})
+	out, err := cli.ImagePull(ctx, taskCode.Image, dockertypes.ImagePullOptions{})
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func runTask(t task.Task, codes code.Storer) error {
 		return err
 	}
 
-	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+	if err := cli.ContainerStart(ctx, resp.ID, dockertypes.ContainerStartOptions{}); err != nil {
 		return err
 	}
 
@@ -110,7 +110,7 @@ func runTask(t task.Task, codes code.Storer) error {
 		}
 	case <-statusCh:
 	}
-	logs, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
+	logs, err := cli.ContainerLogs(ctx, resp.ID, dockertypes.ContainerLogsOptions{ShowStdout: true})
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func runTask(t task.Task, codes code.Storer) error {
 
 	_, _ = stdcopy.StdCopy(os.Stdout, os.Stderr, logs)
 
-	return cli.ContainerRemove(ctx, resp.ID, types.ContainerRemoveOptions{
+	return cli.ContainerRemove(ctx, resp.ID, dockertypes.ContainerRemoveOptions{
 		RemoveVolumes: true,
 		Force:         true,
 	})

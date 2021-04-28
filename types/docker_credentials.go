@@ -1,4 +1,4 @@
-package code
+package types
 
 import (
 	"github.com/philips-software/go-hsdp-api/iron"

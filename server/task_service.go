@@ -1,7 +1,8 @@
-package task
+package server
 
 import (
-	"ferrite/project"
+	"ferrite/storer"
+	"ferrite/types"
 	"net/http"
 	"strings"
 	"time"
@@ -10,21 +11,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Handler struct {
-	Storer        Storer
-	ProjectStorer project.Storer
+type TaskService struct {
+	Storer *storer.Ferrite
 }
 
 type taskResponse struct {
 	Message string `json:"msg"`
 }
 
-func (g *Handler) Create(c echo.Context) error {
+func (g *TaskService) Create(c echo.Context) error {
 	var createTasks struct {
-		Tasks []Task `json:"tasks"`
+		Tasks []types.Task `json:"tasks"`
 	}
 	projectID := c.Param("project")
-	p, err := g.ProjectStorer.FindByID(projectID)
+	p, err := g.Storer.Project.FindByID(projectID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{"invalid or unknown project"})
 	}
@@ -32,7 +32,7 @@ func (g *Handler) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 	}
 	var createdTasks struct {
-		Tasks []Task `json:"tasks"`
+		Tasks []types.Task `json:"tasks"`
 	}
 	for _, task := range createTasks.Tasks {
 		task.ProjectID = p.ID
@@ -47,7 +47,7 @@ func (g *Handler) Create(c echo.Context) error {
 		task.UpdatedAt = &now
 		task.StartTime = &now
 		task.EndTime = &now
-		createdTask, err := g.Storer.Create(task)
+		createdTask, err := g.Storer.Task.Create(task)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 		}
@@ -56,38 +56,38 @@ func (g *Handler) Create(c echo.Context) error {
 	return c.JSON(http.StatusOK, createdTasks)
 }
 
-func (g *Handler) Delete(c echo.Context) error {
+func (g *TaskService) Delete(c echo.Context) error {
 	projectID := c.Param("project")
 	taskID := c.Param("task")
-	p, err := g.ProjectStorer.FindByID(projectID)
+	p, err := g.Storer.Project.FindByID(projectID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{"invalid or unknown project"})
 	}
-	task, err := g.Storer.FindByID(taskID)
+	task, err := g.Storer.Task.FindByID(taskID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{"invalid or unknown task"})
 	}
 	if task.ProjectID != p.ID {
 		return c.JSON(http.StatusBadRequest, taskResponse{"invalid request"})
 	}
-	if err := g.Storer.Delete(task.ID); err != nil {
+	if err := g.Storer.Task.Delete(task.ID); err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 	}
 	return c.JSON(http.StatusOK, taskResponse{"Cancelled"})
 }
 
-func (g *Handler) Find(c echo.Context) error {
+func (g *TaskService) Find(c echo.Context) error {
 	projectID := c.Param("project")
-	p, err := g.ProjectStorer.FindByID(projectID)
+	p, err := g.Storer.Project.FindByID(projectID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{"invalid or unknown project"})
 	}
-	tasks, err := g.Storer.FindByProjectID(p.ID)
+	tasks, err := g.Storer.Task.FindByProjectID(p.ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 	}
 	var taskResponse struct {
-		Tasks []Task `json:"tasks"`
+		Tasks []types.Task `json:"tasks"`
 	}
 	for _, task := range *tasks {
 		taskResponse.Tasks = append(taskResponse.Tasks, task)
@@ -95,14 +95,14 @@ func (g *Handler) Find(c echo.Context) error {
 	return c.JSON(http.StatusOK, taskResponse)
 }
 
-func (g *Handler) Get(c echo.Context) error {
-	var task Task
+func (g *TaskService) Get(c echo.Context) error {
+	var task types.Task
 	projectID := c.Param("project")
 	if err := c.Bind(&task); err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 	}
 	task.ProjectID = projectID
-	foundTask, err := g.Storer.FindByID(task.ID)
+	foundTask, err := g.Storer.Task.FindByID(task.ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, taskResponse{err.Error()})
 	}

@@ -1,4 +1,4 @@
-package project
+package types
 
 type Project struct {
 	ID   string
