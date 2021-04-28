@@ -25,7 +25,14 @@ func (c *CodeStorer) Delete(id string) error {
 }
 
 func (c *CodeStorer) Update(code types.Code) error {
-	panic("implement me")
+	var foundCode types.Code
+	tx := c.DB.First(&foundCode, "id = ?", code.ID)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	// Only update image for now
+	tx = c.DB.Model(&types.Code{}).Where("id = ?", code.ID).Update("image", code.Image)
+	return tx.Error
 }
 
 func (c *CodeStorer) FindByID(id string) (*types.Code, error) {
