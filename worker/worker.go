@@ -86,7 +86,7 @@ func runTask(t task.Task, codes code.Storer) error {
 		Mounts: []mount.Mount{
 			{
 				Type:   mount.TypeVolume,
-				Source: vol.Mountpoint,
+				Source: vol.Name,
 				Target: "/work",
 			},
 		},
