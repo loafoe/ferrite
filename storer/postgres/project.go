@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"ferrite/types"
+	"github.com/philips-labs/ferrite/types"
 
 	"gorm.io/gorm"
 )
@@ -22,5 +22,11 @@ func (g *ProjectStorer) Create(project types.Project) (*types.Project, error) {
 func (g *ProjectStorer) FindByID(id string) (*types.Project, error) {
 	var project types.Project
 	tx := g.DB.First(&project, "id = ?", id)
+	return &project, tx.Error
+}
+
+func (g *ProjectStorer) FindLatest() (*types.Project, error) {
+	var project types.Project
+	tx := g.DB.First(&project).Order("created_at DESC")
 	return &project, tx.Error
 }

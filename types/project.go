@@ -1,6 +1,10 @@
 package types
 
+import "time"
+
 type Project struct {
-	ID   string
-	Name string
+	ID        string
+	Name      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

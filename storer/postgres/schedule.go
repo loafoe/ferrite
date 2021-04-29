@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"ferrite/types"
+	"github.com/philips-labs/ferrite/types"
 
 	"gorm.io/gorm"
 )

@@ -3,11 +3,12 @@ package server
 import (
 	"encoding/base64"
 	"encoding/json"
-	"ferrite/storer"
-	"ferrite/types"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/philips-labs/ferrite/storer"
+	"github.com/philips-labs/ferrite/types"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -70,10 +71,6 @@ func (g *CodeService) Delete(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, codeResponse{err.Error()})
 	}
 	return c.JSON(http.StatusOK, codeResponse{"Deleted"})
-}
-
-func (g *CodeService) Update(c echo.Context) error {
-	panic("implement me")
 }
 
 func (g *CodeService) Find(c echo.Context) error {

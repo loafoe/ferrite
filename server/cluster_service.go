@@ -5,10 +5,11 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"ferrite/storer"
-	"ferrite/types"
 	"net/http"
 	"strings"
+
+	"github.com/philips-labs/ferrite/storer"
+	"github.com/philips-labs/ferrite/types"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -71,7 +72,7 @@ func (g *ClusterService) Get(c echo.Context) error {
 	}
 	block, _ := pem.Decode([]byte(foundCluster.PrivateKey))
 	if block == nil {
-		return c.JSON(http.StatusInternalServerError, clusterResponse{err.Error()})
+		return c.JSON(http.StatusInternalServerError, clusterResponse{"error decoding private key"})
 	}
 	foundCluster.PrivateKey = ""
 

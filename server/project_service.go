@@ -1,8 +1,8 @@
 package server
 
 import (
-	"ferrite/storer"
-	"ferrite/types"
+	"github.com/philips-labs/ferrite/storer"
+	"github.com/philips-labs/ferrite/types"
 	"net/http"
 	"strings"
 

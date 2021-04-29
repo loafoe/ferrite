@@ -1,7 +1,7 @@
 package storer
 
 import (
-	"ferrite/types"
+	"github.com/philips-labs/ferrite/types"
 	"io"
 )
 

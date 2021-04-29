@@ -1,11 +1,11 @@
 package main
 
 import (
-	"ferrite/server"
-	pg "ferrite/storer/postgres"
-	"ferrite/token"
-	"ferrite/worker"
 	"fmt"
+	"github.com/philips-labs/ferrite/server"
+	pg "github.com/philips-labs/ferrite/storer/postgres"
+	"github.com/philips-labs/ferrite/token"
+	"github.com/philips-labs/ferrite/worker"
 	"log"
 	"os"
 
@@ -51,6 +51,9 @@ func main() {
 	e := echo.New()
 	e.Use(token.Checker(os.Getenv("TOKEN")))
 	e.Use(middleware.Logger())
+
+	// Bootstrap
+	e.POST("/bootstrap", svc.Bootstrap.Bootstrap)
 
 	// Clusters
 	e.POST("/2/clusters", svc.Cluster.Create)

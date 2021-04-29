@@ -1,6 +1,6 @@
 package storer
 
-import "ferrite/types"
+import "github.com/philips-labs/ferrite/types"
 
 type Schedule interface {
 	Create(schedule types.Schedule) (*types.Schedule, error)

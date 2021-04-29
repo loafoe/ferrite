@@ -1,4 +1,4 @@
-module ferrite
+module github.com/philips-labs/ferrite
 
 go 1.16
 

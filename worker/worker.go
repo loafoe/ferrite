@@ -4,12 +4,13 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
-	"ferrite/storer"
-	"ferrite/types"
 	"fmt"
 	"io"
 	"os"
 	"time"
+
+	"github.com/philips-labs/ferrite/storer"
+	"github.com/philips-labs/ferrite/types"
 
 	dockertypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -71,7 +72,9 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func() {
+		_ = out.Close()
+	}()
 	_, _ = io.Copy(os.Stdout, out)
 
 	// Create volume
@@ -154,7 +157,9 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	if err != nil {
 		return err
 	}
-	defer logs.Close()
+	defer func() {
+		_ = logs.Close()
+	}()
 
 	_, _ = stdcopy.StdCopy(os.Stdout, os.Stderr, logs)
 

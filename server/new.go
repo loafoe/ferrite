@@ -1,15 +1,16 @@
 package server
 
 import (
-	"ferrite/storer"
+	"github.com/philips-labs/ferrite/storer"
 )
 
 type Ferrite struct {
-	Code     CodeService
-	Project  ProjectService
-	Cluster  ClusterService
-	Task     TaskService
-	Schedule ScheduleService
+	Code      CodeService
+	Project   ProjectService
+	Cluster   ClusterService
+	Task      TaskService
+	Schedule  ScheduleService
+	Bootstrap BootstrapService
 }
 
 func New(fs *storer.Ferrite) (*Ferrite, error) {
@@ -27,6 +28,9 @@ func New(fs *storer.Ferrite) (*Ferrite, error) {
 			Storer: fs,
 		},
 		Schedule: ScheduleService{
+			Storer: fs,
+		},
+		Bootstrap: BootstrapService{
 			Storer: fs,
 		},
 	}, nil

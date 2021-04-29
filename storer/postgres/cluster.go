@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"ferrite/types"
+	"github.com/philips-labs/ferrite/types"
 
 	"gorm.io/gorm"
 )
@@ -27,5 +27,11 @@ func (c *ClusterStorer) Delete(id string) error {
 func (c *ClusterStorer) FindByID(id string) (*types.Cluster, error) {
 	var cluster types.Cluster
 	tx := c.DB.First(&cluster, "id = ?", id)
+	return &cluster, tx.Error
+}
+
+func (c *ClusterStorer) FindLatest() (*types.Cluster, error) {
+	var cluster types.Cluster
+	tx := c.DB.First(&cluster).Order("created_at DESC")
 	return &cluster, tx.Error
 }
