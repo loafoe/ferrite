@@ -1,12 +1,11 @@
 package server
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/philips-labs/ferrite/storer"
 	"github.com/philips-labs/ferrite/types"
@@ -31,35 +30,23 @@ func (g *ClusterService) Create(c echo.Context) error {
 	if cluster.ID != "" { // Update
 		return c.JSON(http.StatusBadRequest, clusterResponse{"updates are not supported"})
 	}
+	now := time.Now()
 	id := strings.Replace(uuid.New().String(), "-", "", -1)
 	cluster.ID = id
+	cluster.CreatedAt = now
+	cluster.UpdatedAt = now
 
-	// Generate key
-	privateKey, err := rsa.GenerateKey(rand.Reader, 4096)
+	privateKeyPEM, err := cluster.GeneratePrivateKeyPEM()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, clusterResponse{err.Error()})
+		return c.JSON(http.StatusInternalServerError, clusterResponse{"error generating private key"})
 	}
-
-	var privateKeyBytes []byte = x509.MarshalPKCS1PrivateKey(privateKey)
-	privateKeyBlock := &pem.Block{
-		Type:  "RSA PRIVATE KEY",
-		Bytes: privateKeyBytes,
-	}
-	privateKeyPEM := pem.EncodeToMemory(privateKeyBlock)
-	cluster.PrivateKey = string(privateKeyPEM)
+	cluster.PrivateKey = privateKeyPEM
 
 	createdCluster, err := g.Storer.Cluster.Create(cluster)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, clusterResponse{err.Error()})
 	}
-	createdCluster.PrivateKey = ""
-	publicKey := &privateKey.PublicKey
-	var publicKeyBytes []byte = x509.MarshalPKCS1PublicKey(publicKey)
-	publicKeyBlock := &pem.Block{
-		Type:  "RSA PUBLIC KEY",
-		Bytes: publicKeyBytes,
-	}
-	publicKeyPEM := pem.EncodeToMemory(publicKeyBlock)
+	publicKeyPEM, _ := createdCluster.PublicKeyPEM()
 	createdCluster.PublicKey = string(publicKeyPEM)
 	return c.JSON(http.StatusCreated, createdCluster)
 }

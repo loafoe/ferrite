@@ -1,6 +1,8 @@
 package types
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
@@ -13,6 +15,20 @@ type Cluster struct {
 	PublicKey  string    `json:"public_key,omitempty" gorm:"-"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+func (c Cluster) GeneratePrivateKeyPEM() (string, error) {
+	privateKey, err := rsa.GenerateKey(rand.Reader, 4096)
+	if err != nil {
+		return "", err
+	}
+	var privateKeyBytes []byte = x509.MarshalPKCS1PrivateKey(privateKey)
+	privateKeyBlock := &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: privateKeyBytes,
+	}
+	privateKeyPEM := pem.EncodeToMemory(privateKeyBlock)
+	return string(privateKeyPEM), nil
 }
 
 func (c Cluster) PublicKeyPEM() (string, error) {

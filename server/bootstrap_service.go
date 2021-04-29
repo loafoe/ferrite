@@ -1,9 +1,13 @@
 package server
 
 import (
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/google/uuid"
 	"github.com/philips-labs/ferrite/storer"
 	"github.com/philips-labs/ferrite/types"
-	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -19,8 +23,15 @@ type bootstrapResponse struct {
 func (b *BootstrapService) Bootstrap(c echo.Context) error {
 	var bootstrap types.Bootstrap
 	cluster, err := b.Storer.Cluster.FindLatest()
+	now := time.Now()
 	if err != nil { // Assume empty
-		cluster, err = b.Storer.Cluster.Create(types.Cluster{})
+		newCluster := types.Cluster{
+			ID:        strings.Replace(uuid.New().String(), "-", "", -1),
+			CreatedAt: now,
+			UpdatedAt: now,
+		}
+		newCluster.PrivateKey, _ = newCluster.GeneratePrivateKeyPEM()
+		cluster, err = b.Storer.Cluster.Create(newCluster)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, bootstrapResponse{err.Error()})
 		}
@@ -28,14 +39,17 @@ func (b *BootstrapService) Bootstrap(c echo.Context) error {
 	project, err := b.Storer.Project.FindLatest()
 	if err != nil { // Assume no project exists
 		project, err = b.Storer.Project.Create(types.Project{
-			Name: "Bootstrapped project",
+			ID:        strings.Replace(uuid.New().String(), "-", "", -1),
+			CreatedAt: now,
+			UpdatedAt: now,
+			Name:      "Bootstrapped project",
 		})
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, bootstrapResponse{err.Error()})
 		}
 	}
-	// Return bootstrap data
 
+	// Return bootstrap data
 	publicKeyPEM, err := cluster.PublicKeyPEM()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, bootstrapResponse{err.Error()})
@@ -43,5 +57,5 @@ func (b *BootstrapService) Bootstrap(c echo.Context) error {
 	bootstrap.ProjectID = project.ID
 	bootstrap.ClusterID = cluster.ID
 	bootstrap.PublicKey = publicKeyPEM
-	return c.JSON(http.StatusOK, &bootstrap)
+	return c.JSON(http.StatusOK, bootstrap)
 }
