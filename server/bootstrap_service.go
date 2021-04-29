@@ -1,6 +1,8 @@
 package server
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -58,4 +60,26 @@ func (b *BootstrapService) Bootstrap(c echo.Context) error {
 	bootstrap.ClusterID = cluster.ID
 	bootstrap.PublicKey = publicKeyPEM
 	return c.JSON(http.StatusOK, bootstrap)
+}
+
+// Bootstrap implement the bootstrap call to ourselves
+func Bootstrap(baseURL, token string) (*types.Bootstrap, error) {
+	bootstrapURL := fmt.Sprintf("%s/bootstrap", baseURL)
+	httpClient := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+		},
+	}
+	req, _ := http.NewRequest(http.MethodPost, bootstrapURL, nil)
+	req.Header.Set("Authorization", "OAuth "+token)
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error bootstrapping ferrite: %w", err)
+	}
+	defer resp.Body.Close()
+	var bootstrap types.Bootstrap
+	if err := json.NewDecoder(resp.Body).Decode(&bootstrap); err != nil {
+		return nil, fmt.Errorf("error decoding ferrite bootstrap data: %w", err)
+	}
+	return &bootstrap, nil
 }
