@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.38.22 // indirect
 	github.com/cloudfoundry-community/gautocloud v1.1.6
 	github.com/cloudfoundry-community/go-cfenv v1.18.0 // indirect
-	github.com/docker/docker v20.10.6+incompatible
+	github.com/docker/docker v20.10.7+incompatible
 	github.com/elastic/go-elasticsearch/v7 v7.12.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/golang/mock v1.5.0 // indirect
