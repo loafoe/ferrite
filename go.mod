@@ -24,7 +24,7 @@ require (
 	github.com/kevinburke/rest v0.0.0-20210222204520-f7a2e216372f // indirect
 	github.com/kevinburke/twilio-go v0.0.0-20210327194925-1623146bcf73 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.6 // indirect
-	github.com/labstack/echo/v4 v4.3.0
+	github.com/labstack/echo/v4 v4.5.0
 	github.com/lib/pq v1.10.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
