@@ -3,18 +3,14 @@ module github.com/philips-labs/ferrite
 go 1.16
 
 require (
-	github.com/aws/aws-sdk-go v1.38.22 // indirect
 	github.com/cloudfoundry-community/gautocloud v1.1.7
 	github.com/docker/docker v20.10.8+incompatible
-	github.com/elastic/go-elasticsearch/v7 v7.12.0 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.6.8 // indirect
-	github.com/hashicorp/vault/api v1.1.0 // indirect
-	github.com/hashicorp/vault/sdk v0.2.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.0.7 // indirect
 	github.com/kevinburke/go-types v0.0.0-20201208005256-aee49f568a20 // indirect
 	github.com/kevinburke/rest v0.0.0-20210222204520-f7a2e216372f // indirect
@@ -22,12 +18,10 @@ require (
 	github.com/klauspost/cpuid/v2 v2.0.6 // indirect
 	github.com/labstack/echo/v4 v4.5.0
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.0.10 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
-	github.com/philips-software/gautocloud-connectors v0.4.0
-	github.com/philips-software/go-hsdp-api v0.38.1-0.20210428141703-9f4371331e80
-	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
+	github.com/philips-software/gautocloud-connectors v0.6.0
+	github.com/philips-software/go-hsdp-api v0.42.3
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
