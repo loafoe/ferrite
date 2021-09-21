@@ -20,7 +20,7 @@ require (
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
 	github.com/philips-software/gautocloud-connectors v0.6.0
-	github.com/philips-software/go-hsdp-api v0.43.0
+	github.com/philips-software/go-hsdp-api v0.44.0
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
