@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/cloudfoundry-community/gautocloud v1.1.7
+	github.com/containerd/containerd v1.4.11 // indirect
 	github.com/docker/docker v20.10.9+incompatible
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/uuid v1.3.0
@@ -26,4 +27,5 @@ require (
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	gorm.io/driver/postgres v1.1.2
 	gorm.io/gorm v1.21.15
+
 )
