@@ -3,10 +3,9 @@ module github.com/philips-labs/ferrite
 go 1.16
 
 require (
-	github.com/cloudfoundry-community/gautocloud v1.1.7
+	github.com/cloudfoundry-community/gautocloud v1.1.8
 	github.com/containerd/containerd v1.4.11 // indirect
 	github.com/docker/docker v20.10.9+incompatible
-	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
