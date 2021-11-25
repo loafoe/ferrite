@@ -3,8 +3,9 @@ module github.com/philips-labs/ferrite
 go 1.16
 
 require (
+	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/cloudfoundry-community/gautocloud v1.1.8
-	github.com/containerd/containerd v1.4.11 // indirect
+	github.com/containerd/containerd v1.4.12 // indirect
 	github.com/docker/docker v20.10.11+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -19,12 +20,18 @@ require (
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
+	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/philips-software/gautocloud-connectors v0.6.0
 	github.com/philips-software/go-hsdp-api v0.50.2
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
+	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 // indirect
+	golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
+	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 // indirect
+	google.golang.org/grpc v1.42.0 // indirect
 	gorm.io/driver/postgres v1.2.2
 	gorm.io/gorm v1.22.3
+	gotest.tools/v3 v3.0.3 // indirect
 
 )
