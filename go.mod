@@ -22,7 +22,7 @@ require (
 	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/philips-software/gautocloud-connectors v0.6.0
-	github.com/philips-software/go-hsdp-api v0.51.0
+	github.com/philips-software/go-hsdp-api v0.60.1
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
 	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 // indirect
