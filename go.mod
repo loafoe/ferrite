@@ -31,7 +31,7 @@ require (
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 // indirect
 	google.golang.org/grpc v1.42.0 // indirect
-	gorm.io/driver/postgres v1.2.3
+	gorm.io/driver/postgres v1.3.1
 	gorm.io/gorm v1.23.2
 	gotest.tools/v3 v3.0.3 // indirect
 
