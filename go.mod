@@ -28,6 +28,6 @@ require (
 	golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9 // indirect
 	google.golang.org/genproto v0.0.0-20220304144024-325a89244dc8 // indirect
 	gorm.io/driver/postgres v1.3.1
-	gorm.io/gorm v1.23.2
+	gorm.io/gorm v1.23.3
 
 )
