@@ -16,7 +16,7 @@ require (
 	github.com/kevinburke/twilio-go v0.0.0-20210327194925-1623146bcf73 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.6 // indirect
-	github.com/labstack/echo/v4 v4.7.0
+	github.com/labstack/echo/v4 v4.7.2
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
