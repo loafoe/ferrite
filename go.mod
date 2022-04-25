@@ -23,7 +23,7 @@ require (
 	github.com/philips-software/go-hsdp-api v0.63.0
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
-	gorm.io/driver/postgres v1.3.4
+	gorm.io/driver/postgres v1.3.5
 	gorm.io/gorm v1.23.4
 
 )
