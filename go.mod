@@ -28,7 +28,7 @@ require (
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	gorm.io/driver/postgres v1.3.7
-	gorm.io/gorm v1.23.6
+	gorm.io/gorm v1.23.7
 	gotest.tools/v3 v3.0.3 // indirect
 
 )
