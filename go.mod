@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/cloudfoundry-community/gautocloud v1.1.9
+	github.com/cloudfoundry-community/gautocloud v1.1.10
 	github.com/docker/distribution v2.8.0+incompatible // indirect
 	github.com/docker/docker v20.10.17+incompatible
 	github.com/google/uuid v1.3.0
