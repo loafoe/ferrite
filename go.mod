@@ -27,7 +27,7 @@ require (
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
-	gorm.io/driver/postgres v1.3.8
+	gorm.io/driver/postgres v1.3.9
 	gorm.io/gorm v1.23.8
 	gotest.tools/v3 v3.0.3 // indirect
 
