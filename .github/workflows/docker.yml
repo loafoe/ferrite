@@ -29,6 +29,6 @@ jobs:
          file: ./Dockerfile
          platforms: linux/amd64
          push: true
-         tags: philipslabs/ferrite:latest
-         cache-from: type=registry,ref=philipslabs/ferrite:latest
+         tags: loafoe/ferrite:latest
+         cache-from: type=registry,ref=loafoe/ferrite:latest
          cache-to: type=inline
