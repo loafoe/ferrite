@@ -40,8 +40,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: philipslabs/ferrite:${{ steps.vars.outputs.tag }}
-          cache-from: type=registry,ref=philipslabs/ferrite:latest
+          tags: loafoe/ferrite:${{ steps.vars.outputs.tag }}
+          cache-from: type=registry,ref=loafoe/ferrite:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
