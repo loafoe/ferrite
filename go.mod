@@ -20,7 +20,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/philips-software/gautocloud-connectors v0.7.0
-	github.com/philips-software/go-hsdp-api v0.74.1
+	github.com/philips-software/go-hsdp-api v0.74.2
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	gorm.io/driver/postgres v1.3.10
