@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/cloudfoundry-community/gautocloud v1.1.11
-	github.com/docker/docker v20.10.12+incompatible
+	github.com/docker/docker v20.10.18+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.9.0
 	github.com/philips-software/gautocloud-connectors v0.7.0
@@ -21,7 +21,6 @@ require (
 	github.com/cenkalti/backoff/v3 v3.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cloudfoundry-community/go-cfenv v1.18.0 // indirect
-	github.com/containerd/containerd v1.6.8 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -39,7 +38,6 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.2.0 // indirect
@@ -137,4 +135,5 @@ require (
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gotest.tools/v3 v3.0.3 // indirect
 )
