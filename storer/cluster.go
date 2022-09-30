@@ -1,6 +1,6 @@
 package storer
 
-import "github.com/philips-labs/ferrite/types"
+import "github.com/loafoe/ferrite/types"
 
 type Cluster interface {
 	Create(cluster types.Cluster) (*types.Cluster, error)

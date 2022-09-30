@@ -1,10 +1,11 @@
 package server
 
 import (
-	"github.com/philips-labs/ferrite/storer"
-	"github.com/philips-labs/ferrite/types"
 	"net/http"
 	"strings"
+
+	"github.com/loafoe/ferrite/storer"
+	"github.com/loafoe/ferrite/types"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"

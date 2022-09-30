@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/philips-labs/ferrite/storer"
-	"github.com/philips-labs/ferrite/types"
+	"github.com/loafoe/ferrite/storer"
+	"github.com/loafoe/ferrite/types"
 
 	"github.com/labstack/echo/v4"
 )
@@ -76,7 +76,9 @@ func Bootstrap(baseURL, token string) (*types.Bootstrap, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error bootstrapping ferrite: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	var bootstrap types.Bootstrap
 	if err := json.NewDecoder(resp.Body).Decode(&bootstrap); err != nil {
 		return nil, fmt.Errorf("error decoding ferrite bootstrap data: %w", err)

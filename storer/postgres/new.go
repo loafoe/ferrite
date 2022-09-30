@@ -2,8 +2,9 @@ package postgres
 
 import (
 	"database/sql"
-	"github.com/philips-labs/ferrite/storer"
-	"github.com/philips-labs/ferrite/types"
+
+	"github.com/loafoe/ferrite/storer"
+	"github.com/loafoe/ferrite/types"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

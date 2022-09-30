@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/philips-labs/ferrite/storer"
+	"github.com/loafoe/ferrite/storer"
 )
 
 type Ferrite struct {

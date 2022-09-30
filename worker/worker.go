@@ -9,8 +9,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/philips-labs/ferrite/storer"
-	"github.com/philips-labs/ferrite/types"
+	"github.com/loafoe/ferrite/storer"
+	"github.com/loafoe/ferrite/types"
 
 	dockertypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"

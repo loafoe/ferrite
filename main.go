@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/philips-labs/ferrite/server"
-	pg "github.com/philips-labs/ferrite/storer/postgres"
-	"github.com/philips-labs/ferrite/token"
-	"github.com/philips-labs/ferrite/worker"
 	"log"
 	"os"
+
+	"github.com/loafoe/ferrite/server"
+	pg "github.com/loafoe/ferrite/storer/postgres"
+	"github.com/loafoe/ferrite/token"
+	"github.com/loafoe/ferrite/worker"
 
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/labstack/echo/v4"

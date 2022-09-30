@@ -1,8 +1,9 @@
 package storer
 
 import (
-	"github.com/philips-labs/ferrite/types"
 	"io"
+
+	"github.com/loafoe/ferrite/types"
 )
 
 var (
