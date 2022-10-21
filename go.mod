@@ -9,8 +9,8 @@ require (
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/philips-software/gautocloud-connectors v0.7.0
 	github.com/philips-software/go-hsdp-api v0.75.3
-	gorm.io/driver/postgres v1.4.4
-	gorm.io/gorm v1.24.0
+	gorm.io/driver/postgres v1.4.5
+	gorm.io/gorm v1.24.1-0.20221019064659-5dd2bb482755
 )
 
 require (
