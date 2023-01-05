@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.10.0
 	github.com/philips-software/gautocloud-connectors v0.7.0
-	github.com/philips-software/go-hsdp-api v0.76.1
+	github.com/philips-software/go-hsdp-api v0.77.2
 	gorm.io/driver/postgres v1.4.6
 	gorm.io/gorm v1.24.2
 )
