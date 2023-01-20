@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/cloudfoundry-community/gautocloud v1.2.0
-	github.com/docker/docker v20.10.22+incompatible
+	github.com/docker/docker v20.10.23+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.10.0
 	github.com/philips-software/gautocloud-connectors v0.7.0
