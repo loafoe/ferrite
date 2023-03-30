@@ -9,7 +9,7 @@ COPY . .
 RUN go build -o app
 
 ## Build final image
-FROM alpine:3.17.2
+FROM alpine:3.17.3
 LABEL maintainer="andy.lo-a-foe@philips.com"
 RUN apk add --no-cache ca-certificates jq curl
 
