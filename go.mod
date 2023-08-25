@@ -5,10 +5,10 @@ go 1.18
 require (
 	github.com/cloudfoundry-community/gautocloud v1.3.1
 	github.com/docker/docker v24.0.5+incompatible
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.3.1
 	github.com/labstack/echo/v4 v4.11.1
 	github.com/philips-software/gautocloud-connectors v0.7.0
-	github.com/philips-software/go-hsdp-api v0.81.1
+	github.com/philips-software/go-hsdp-api v0.81.3
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.4
 )
@@ -82,7 +82,7 @@ require (
 	github.com/kevinburke/go.uuid v1.2.0 // indirect
 	github.com/kevinburke/rest v0.0.0-20210222204520-f7a2e216372f // indirect
 	github.com/kevinburke/twilio-go v0.0.0-20210327194925-1623146bcf73 // indirect
-	github.com/klauspost/compress v1.16.5 // indirect
+	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
@@ -118,11 +118,11 @@ require (
 	github.com/ttacon/libphonenumber v1.2.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/net v0.12.0 // indirect
+	golang.org/x/crypto v0.12.0 // indirect
+	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
 	google.golang.org/grpc v1.55.0 // indirect
