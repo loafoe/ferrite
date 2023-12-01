@@ -6,7 +6,7 @@ require (
 	github.com/cloudfoundry-community/gautocloud v1.3.1
 	github.com/docker/docker v24.0.6+incompatible
 	github.com/google/uuid v1.4.0
-	github.com/labstack/echo/v4 v4.11.2
+	github.com/labstack/echo/v4 v4.11.3
 	github.com/philips-software/gautocloud-connectors v0.7.0
 	github.com/philips-software/go-hsdp-api v0.83.3
 	gorm.io/driver/postgres v1.5.4
