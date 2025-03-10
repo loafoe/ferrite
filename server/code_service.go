@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/philips-software/go-hsdp-api/iron"
+	"github.com/dip-software/go-dip-api/iron"
 )
 
 type CodeService struct {

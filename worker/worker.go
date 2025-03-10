@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/docker/docker/api/types/image"
 	"io"
 	"os"
 	"time"
@@ -12,13 +13,12 @@ import (
 	"github.com/loafoe/ferrite/storer"
 	"github.com/loafoe/ferrite/types"
 
-	dockertypes "github.com/docker/docker/api/types"
+	"github.com/dip-software/go-dip-api/iron"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
-	"github.com/philips-software/go-hsdp-api/iron"
 )
 
 // Start starts a worker run
@@ -68,7 +68,7 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	if err != nil {
 		return err
 	}
-	out, err := cli.ImagePull(ctx, taskCode.Image, dockertypes.ImagePullOptions{})
+	out, err := cli.ImagePull(ctx, taskCode.Image, image.PullOptions{})
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	_, _ = io.Copy(os.Stdout, out)
 
 	// Create volume
-	vol, err := cli.VolumeCreate(ctx, volume.VolumeCreateBody{
+	vol, err := cli.VolumeCreate(ctx, volume.CreateOptions{
 		Driver: "local",
 		Name:   t.ID,
 	})
@@ -135,12 +135,12 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 		return fmt.Errorf("tarWrite: %w", err)
 	}
 	_ = tw.Close()
-	if err := cli.CopyToContainer(ctx, resp.ID, "/work", &buf, dockertypes.CopyToContainerOptions{}); err != nil {
+	if err := cli.CopyToContainer(ctx, resp.ID, "/work", &buf, container.CopyToContainerOptions{}); err != nil {
 		return fmt.Errorf("writing payload to container: %w", err)
 	}
 
 	// Start container
-	if err := cli.ContainerStart(ctx, resp.ID, dockertypes.ContainerStartOptions{}); err != nil {
+	if err := cli.ContainerStart(ctx, resp.ID, container.StartOptions{}); err != nil {
 		return err
 	}
 
@@ -153,7 +153,7 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 		}
 	case <-statusCh:
 	}
-	logs, err := cli.ContainerLogs(ctx, resp.ID, dockertypes.ContainerLogsOptions{ShowStdout: true})
+	logs, err := cli.ContainerLogs(ctx, resp.ID, container.LogsOptions{ShowStdout: true})
 	if err != nil {
 		return err
 	}
@@ -164,7 +164,7 @@ func runTask(t types.Task, fs *storer.Ferrite) error {
 	_, _ = stdcopy.StdCopy(os.Stdout, os.Stderr, logs)
 
 	// Cleanup
-	return cli.ContainerRemove(ctx, resp.ID, dockertypes.ContainerRemoveOptions{
+	return cli.ContainerRemove(ctx, resp.ID, container.RemoveOptions{
 		RemoveVolumes: true,
 		Force:         true,
 	})

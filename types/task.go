@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/philips-software/go-hsdp-api/iron"
+	"github.com/dip-software/go-dip-api/iron"
 )
 
 // Task represents a task that needs to be scheduled and run on a cluster
